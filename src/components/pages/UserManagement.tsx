@@ -4,12 +4,15 @@ import { UserCard } from "../organisims/user/UserCard";
 import { useAllUsers } from "../../hooks/useAllUsers";
 import { UserDetailModal } from "../organisims/user/UserDetailModal";
 import { useSelectUser } from "../../hooks/useSelectUser";
+import { useLoginUser } from "../../hooks/useLoginUser";
 
 export const UserManagement:VFC = memo(() => {
     const {isOpen, onOpen, onClose} = useDisclosure(); //3つのプロパティはMdal表示に必要
     const {getUsers, users, loading} = useAllUsers();
     const {onSelectUser, selectedUser} = useSelectUser();
-    console.log(selectedUser);
+    const { loginUser } = useLoginUser();
+    console.log(loginUser);
+    
     useEffect(()=> getUsers(), []);
 
     const onClickUser = useCallback((id:number) => { 
@@ -37,7 +40,7 @@ export const UserManagement:VFC = memo(() => {
             ))}
         </Wrap>
         )}
-       <UserDetailModal user={selectedUser} isOpen={isOpen} onClose={onClose}/>
+       <UserDetailModal user={selectedUser} isOpen={isOpen} isAdmin={loginUser?.isAdmin} onClose={onClose}/>
         </>
     );
 });
