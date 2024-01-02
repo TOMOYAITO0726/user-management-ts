@@ -1,11 +1,15 @@
-import { Center, Spinner, Wrap, WrapItem } from "@chakra-ui/react";
-import { memo, useEffect, VFC } from "react";
-import { UserCard } from "../organisims/layout/user/UserCard";
+import { Center,  Spinner, Wrap, WrapItem, useDisclosure } from "@chakra-ui/react";
+import { memo, useCallback, useEffect, VFC } from "react";
+import { UserCard } from "../organisims/user/UserCard";
 import { useAllUsers } from "../../hooks/useAllUsers";
+import { UserDetailModal } from "../organisims/user/UserDetailModal";
 
 export const UserManagement:VFC = memo(() => {
+    const {isOpen, onOpen, onClose} = useDisclosure(); //3つのプロパティはMdal表示に必要
     const {getUsers, users, loading} = useAllUsers();
     useEffect(()=> getUsers(), [])
+
+    const onClickUser = useCallback(() => onOpen(),[])
     return(
         <>
         {loading? (
@@ -19,11 +23,14 @@ export const UserManagement:VFC = memo(() => {
                 <UserCard 
                 imageUrl="https://source.unsplash.com/random" 
                 userName={user.username}
-                fullName={user.name}/>
+                fullName={user.name}
+                onClick={onClickUser}
+                />
             </WrapItem>
             ))}
         </Wrap>
         )}
+       <UserDetailModal isOpen={isOpen} onClose={onClose}/>
         </>
     );
 });
