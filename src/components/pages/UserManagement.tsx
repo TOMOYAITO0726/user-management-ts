@@ -3,13 +3,19 @@ import { memo, useCallback, useEffect, VFC } from "react";
 import { UserCard } from "../organisims/user/UserCard";
 import { useAllUsers } from "../../hooks/useAllUsers";
 import { UserDetailModal } from "../organisims/user/UserDetailModal";
+import { useSelectUser } from "../../hooks/useSelectUser";
 
 export const UserManagement:VFC = memo(() => {
     const {isOpen, onOpen, onClose} = useDisclosure(); //3つのプロパティはMdal表示に必要
     const {getUsers, users, loading} = useAllUsers();
-    useEffect(()=> getUsers(), [])
+    const {onSelectUser, selectedUser} = useSelectUser();
+    console.log(selectedUser);
+    useEffect(()=> getUsers(), []);
 
-    const onClickUser = useCallback(() => onOpen(),[])
+    const onClickUser = useCallback((id:number) => { 
+        console.log(id);
+        onSelectUser({id, users, onOpen});
+    },[users, onSelectUser, onOpen])
     return(
         <>
         {loading? (
@@ -21,7 +27,8 @@ export const UserManagement:VFC = memo(() => {
                 {users.map((user)=>(
             <WrapItem key={user.id} mx="auto">
                 <UserCard 
-                imageUrl="https://source.unsplash.com/random" 
+                id={user.id}
+                imageUrl="https://source.unsplash.com/users" 
                 userName={user.username}
                 fullName={user.name}
                 onClick={onClickUser}
@@ -30,7 +37,7 @@ export const UserManagement:VFC = memo(() => {
             ))}
         </Wrap>
         )}
-       <UserDetailModal isOpen={isOpen} onClose={onClose}/>
+       <UserDetailModal user={selectedUser} isOpen={isOpen} onClose={onClose}/>
         </>
     );
 });
